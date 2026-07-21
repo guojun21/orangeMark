@@ -94,7 +94,7 @@ ${title}.
 
 ### Version
 
-orangeMarkdown: ${MARKTEXT_VERSION_STRING}
+orangeMark: ${MARKTEXT_VERSION_STRING}
 Operating system: ${getOSInformation()}`
         )
         break

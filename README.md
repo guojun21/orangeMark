@@ -1,35 +1,70 @@
-<h1 align="center">orangeMarkdown</h1>
+<p align="center">
+  <img src="docs/assets/logo.png" width="112" height="112" alt="orangeMark logo" />
+</p>
 
-<p align="center">一个所见即所得的 Markdown 编辑器,项目/工作区优先,暖橙极简风。</p>
+<h1 align="center">orangeMark</h1>
+
+<p align="center">
+  <b>A project-first WYSIWYG Markdown editor.</b><br/>
+  Open a folder, get a VS Code-style explorer, and write in a clean, warm, distraction-free canvas.
+</p>
+
+<p align="center">
+  <a href="https://github.com/guojun21/orangeMark/stargazers"><img src="https://img.shields.io/github/stars/guojun21/orangeMark?style=flat&color=e8863c" alt="Stars"></a>
+  <img src="https://img.shields.io/badge/platform-macOS-lightgrey" alt="Platform">
+  <img src="https://img.shields.io/badge/built%20with-Electron%20%2B%20Vue%203-42b883" alt="Built with">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
+</p>
+
+<p align="center">
+  <img src="docs/assets/screenshot-welcome.png" width="720" alt="orangeMark — open a project" />
+</p>
 
 ---
 
-## 简介
+## Why orangeMark
 
-orangeMarkdown 是一个桌面 Markdown 编辑器,面向"把一个文件夹当项目来写作"的工作流。它在开源编辑器 [MarkText](https://github.com/marktext/marktext) 的基础上定制而来,主要改动:
+Most Markdown editors open into a floating, path-less "Untitled" buffer. orangeMark does the opposite: **every window is bound to a project folder.** You open a folder, and the whole app — the file tree, the tabs, new files — lives inside that project. No orphan documents, no "where did I save that".
 
-- **强绑定项目**:不存在无路径的空白窗口。启动即进入"打开项目"欢迎屏,选定一个文件夹后才进入编辑器。
-- **Plume 主题**:原创的暖白极简配色,适合长文阅读与写作。
-- **项目资源管理器**:类 VS Code 的左侧资源管理器 —— 工作区根、悬停操作(新建文件/文件夹、刷新、全部折叠)、缩进引导线、当前文件高亮、最近项目与启动恢复。
-- **原创品牌与图标**。
+It builds on the excellent open-source [MarkText](https://github.com/marktext/marktext) editor and adds a project-centric workflow, a warm minimal theme, and a VS Code-style explorer.
 
-保留 MarkText 原有的编辑能力:所见即所得实时预览、源码模式、专注模式、打字机模式、大纲、数学公式(KaTeX)、Mermaid 图、代码高亮、导出。
+## Features
 
-## 技术栈
+| | |
+|---|---|
+| 🗂️ **Project-first** | No path-less windows. Launch straight into a folder picker; every session is a project. |
+| 🌳 **VS Code-style explorer** | Workspace root, hover actions (new file/folder, refresh, collapse-all), indent guides, active-file highlight, recent projects. |
+| 🍊 **Plume theme** | An original warm-white, minimal palette tuned for long-form reading and writing. |
+| ✍️ **True WYSIWYG** | Seamless live preview — no split pane. Plus source-code mode, focus mode, typewriter mode. |
+| 🧮 **Math & diagrams** | KaTeX formulas, Mermaid diagrams, syntax-highlighted code blocks. |
+| 🧭 **Outline & search** | Document outline (TOC) and full-project search in the sidebar. |
+| 📤 **Export** | HTML / PDF export out of the box. |
 
-Electron 42 + Vue 3 + Vite(electron-vite),编辑器引擎为 muya,pnpm monorepo。
+## Quick start
 
-## 开发
+Requires Node.js ≥ 20 and pnpm ≥ 10.
 
 ```bash
+git clone https://github.com/guojun21/orangeMark.git
+cd orangeMark
 pnpm install
-pnpm --filter marktext dev                                   # 开发态
-pnpm --filter marktext build                                 # 构建
-pnpm --filter marktext exec electron-builder --mac --arm64   # 打包 macOS
+
+pnpm --filter marktext dev                                   # run in dev
+pnpm --filter marktext exec electron-builder --mac --arm64   # package a macOS .app / .dmg
 ```
 
-## 致谢与许可
+## Tech stack
 
-本项目基于 **[MarkText](https://github.com/marktext/marktext)**(MIT License,Copyright © 2017-present Luo Ran)定制。上游的 MIT 许可与版权声明完整保留于 [`LICENSE`](./LICENSE)。orangeMarkdown 新增的定制部分同样以 MIT 许可发布。
+Electron 42 · Vue 3 · Vite (electron-vite) · Pinia · the **muya** WYSIWYG engine · pnpm monorepo.
 
-界面、主题、图标均为原创实现;对 Typora、VS Code 的交互理念有所借鉴,但未使用其受版权保护的资源或源码。
+## Credits & license
+
+orangeMark is a customization of **[MarkText](https://github.com/marktext/marktext)** (MIT License, © 2017-present Luo Ran). The upstream MIT license and copyright are preserved in full in [`LICENSE`](./LICENSE). orangeMark's additions are released under the same MIT license.
+
+UI, theme, and icon are original work. Interaction ideas are inspired by Typora and VS Code; no copyrighted assets or source from those products are used.
+
+---
+
+<p align="center">
+  If orangeMark helps you write, please leave a ⭐ — it genuinely helps.
+</p>

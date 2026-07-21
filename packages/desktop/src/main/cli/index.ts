@@ -17,7 +17,7 @@ const cli = (): ParsedArgs => {
 
   const args = parseArgs(argv, true)
   if (args['--help']) {
-    write(`Usage: orangeMarkdown [commands] [path ...]
+    write(`Usage: orangeMark [commands] [path ...]
 
   Available commands:
 
@@ -35,7 +35,7 @@ const cli = (): ParsedArgs => {
   }
 
   if (args['--version']) {
-    writeLine(`orangeMarkdown: ${MARKTEXT_VERSION_STRING}`)
+    writeLine(`orangeMark: ${MARKTEXT_VERSION_STRING}`)
     writeLine(`Node.js: ${process.versions.node}`)
     writeLine(`Electron: ${process.versions.electron}`)
     writeLine(`Chromium: ${process.versions.chrome}`)

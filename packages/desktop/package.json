@@ -1,7 +1,7 @@
 {
   "name": "marktext",
   "version": "0.20.0-dev",
-  "description": "orangeMarkdown",
+  "description": "orangeMark",
   "main": "./out/main/index.js",
   "author": {
     "name": "Jocs",

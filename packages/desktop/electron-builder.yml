@@ -1,5 +1,5 @@
-appId: com.orangemarkdown.desktop
-productName: orangeMarkdown
+appId: com.orangemark.desktop
+productName: orangeMark
 directories:
   buildResources: build
   output: ../../dist
@@ -91,14 +91,14 @@ fileAssociations:
     role: Editor
     icon: icons/md.ico
 win:
-  executableName: orangeMarkdown
-  artifactName: 'orangeMarkdown-win-${arch}-${version}.${ext}'
+  executableName: orangeMark
+  artifactName: 'orangeMark-win-${arch}-${version}.${ext}'
   target:
     - target: 'nsis'
     - target: 'zip'
   icon: static/icon.ico
 nsis:
-  artifactName: 'orangeMarkdown-win-${arch}-${version}-setup.${ext}'
+  artifactName: 'orangeMark-win-${arch}-${version}-setup.${ext}'
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: true
@@ -108,7 +108,7 @@ nsis:
   perMachine: false
   include: windows/installer.nsh
 mac:
-  artifactName: 'orangeMarkdown-mac-${arch}-${version}.${ext}'
+  artifactName: 'orangeMark-mac-${arch}-${version}.${ext}'
   entitlementsInherit: build/mac/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -120,7 +120,7 @@ mac:
     - dmg
     - zip
 dmg:
-  artifactName: 'orangeMarkdown-mac-${arch}-${version}.${ext}'
+  artifactName: 'orangeMark-mac-${arch}-${version}.${ext}'
   contents:
     - x: 410
       y: 240
@@ -130,18 +130,18 @@ dmg:
       y: 240
       type: 'file'
 linux:
-  artifactName: 'orangeMarkdown-linux-${version}.${ext}'
-  executableName: 'orangeMarkdown'
+  artifactName: 'orangeMark-linux-${version}.${ext}'
+  executableName: 'orangeMark'
   description: 'A simple and elegant open-source markdown editor that focused on speed and usability.'
-  maintainer: 'orangeMarkdown Contributors'
+  maintainer: 'orangeMark Contributors'
   category: 'Office;TextEditor;Utility'
   mimeTypes:
     - 'text/markdown'
   icon: 'static/icon.png'
   desktop:
     entry:
-      StartupWMClass: 'orangeMarkdown'
-      Keywords: 'orangeMarkdown;'
+      StartupWMClass: 'orangeMark'
+      Keywords: 'orangeMark;'
   target:
     - AppImage
     - snap

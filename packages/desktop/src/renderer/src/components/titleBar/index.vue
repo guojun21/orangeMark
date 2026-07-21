@@ -19,7 +19,7 @@
         class="title"
         @dblclick.stop="toggleMaxmizeOnMacOS"
       >
-        <span v-if="!filename">orangeMarkdown</span>
+        <span v-if="!filename">orangeMark</span>
         <span v-else>
           <span
             v-for="(path, index) of paths"
@@ -232,11 +232,11 @@ watch(
     // Set filename when hover on dock
     const hasOpenFolder = !!(props.project && props.project.name)
     const projectName = props.project?.name ?? ''
-    let title = 'orangeMarkdown'
+    let title = 'orangeMark'
     if (value) {
       title = hasOpenFolder ? `${value} - ${projectName}` : `${value}`
     } else {
-      title = hasOpenFolder ? projectName : 'orangeMarkdown'
+      title = hasOpenFolder ? projectName : 'orangeMark'
     }
 
     document.title = title

@@ -54,7 +54,7 @@ export default function(): MenuItemConstructorOptions {
       }
     },
     {
-      label: t('menu.help.support').replace('MarkText', 'orangeMarkdown'),
+      label: t('menu.help.support').replace('MarkText', 'orangeMark'),
       click() {
         shell.openExternal('https://github.com/sponsors/marktext')
       }

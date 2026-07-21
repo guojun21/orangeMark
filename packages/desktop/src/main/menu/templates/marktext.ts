@@ -8,10 +8,10 @@ import type Keybindings from '../../keyboard/shortcutHandler'
 
 export default function(keybindings: Keybindings): MenuItemConstructorOptions {
   return {
-    label: t('menu.marktext.title').replace('MarkText', 'orangeMarkdown'),
+    label: t('menu.marktext.title').replace('MarkText', 'orangeMark'),
     submenu: [
       {
-        label: t('menu.marktext.about').replace('MarkText', 'orangeMarkdown'),
+        label: t('menu.marktext.about').replace('MarkText', 'orangeMark'),
         click(_menuItem, focusedWindow) {
           showAboutDialog(focusedWindow as BrowserWindow | undefined)
         }
@@ -41,7 +41,7 @@ export default function(keybindings: Keybindings): MenuItemConstructorOptions {
         type: 'separator'
       },
       {
-        label: t('menu.marktext.hide').replace('MarkText', 'orangeMarkdown'),
+        label: t('menu.marktext.hide').replace('MarkText', 'orangeMark'),
         accelerator: keybindings.getAccelerator('mt.hide') ?? undefined,
         click() {
           actions.osxHide()
@@ -64,7 +64,7 @@ export default function(keybindings: Keybindings): MenuItemConstructorOptions {
         type: 'separator'
       },
       {
-        label: t('menu.marktext.quit').replace('MarkText', 'orangeMarkdown'),
+        label: t('menu.marktext.quit').replace('MarkText', 'orangeMark'),
         accelerator: keybindings.getAccelerator('file.quit') ?? undefined,
         click: app.quit
       }
