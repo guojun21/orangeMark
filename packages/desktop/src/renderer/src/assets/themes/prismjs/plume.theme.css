@@ -1,0 +1,106 @@
+/* Original syntax palette for the Plume light theme. */
+
+code[class*='language-'],
+pre.ag-paragraph {
+  color: #292722;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  hyphens: none;
+  overflow: visible;
+}
+
+pre.ag-paragraph {
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 0.25em;
+}
+
+:not(pre) > code[class*='language-'],
+pre.ag-paragraph {
+  background: #f3ede4;
+}
+
+:not(pre) > code[class*='language-'] {
+  padding: 0.1em 0.2em;
+  border-radius: 0.2em;
+  white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #8c8276;
+}
+
+.token.punctuation {
+  color: #625c53;
+}
+
+.namespace {
+  opacity: 0.72;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #a04e4a;
+}
+
+.token.boolean,
+.token.number {
+  color: #765a91;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #52705f;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #5c6870;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+  color: #986247;
+}
+
+.token.keyword {
+  color: #4d6581;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #8b573f;
+}
+
+.token.important,
+.token.bold {
+  font-weight: 700;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
