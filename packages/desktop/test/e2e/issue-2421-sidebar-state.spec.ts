@@ -5,7 +5,7 @@ import { launchWithMarkdown } from './helpers'
 // #2421 — toggling the sidebar via its left-column icons must not lose state.
 // Two bugs: (1) collapsing to the icon strip persisted the clamped 220px width
 // instead of the real width, so re-expanding shrank the sidebar; (2) the tree's
-// collapsed sections (Opened files / Directories) are local refs under a v-if,
+// collapsed directory state is a local ref under a v-if,
 // so collapsing the sidebar destroyed the tree and reset them on re-expand.
 // These drive the real built app.
 
@@ -73,14 +73,14 @@ test.describe('#2421 sidebar state survives icon toggle', () => {
     expect(Math.abs(reExpanded - widened)).toBeLessThanOrEqual(3)
   })
 
-  test('a collapsed tree section stays collapsed after toggling the sidebar', async() => {
-    const arrow = page.locator('.side-bar .opened-files > .title .icon-arrow').first()
+  test('a collapsed project tree stays collapsed after toggling the sidebar', async() => {
+    const arrow = page.locator('.side-bar .project-tree > .title .icon-arrow').first()
     await expect(arrow).toBeVisible()
 
-    // Collapse the "Opened files" section.
+    // Collapse the project directory tree.
     await arrow.click()
     await page.waitForFunction(() => {
-      const a = document.querySelector('.side-bar .opened-files .icon-arrow')
+      const a = document.querySelector('.side-bar .project-tree > .title .icon-arrow')
       return !!(a && a.classList.contains('fold'))
     }, null, { timeout: 5000 })
 
@@ -89,12 +89,12 @@ test.describe('#2421 sidebar state survives icon toggle', () => {
     await page.waitForTimeout(250)
     await filesIcon(page).click()
     await page.waitForFunction(() => {
-      const el = document.querySelector('.side-bar .opened-files') as HTMLElement | null
+      const el = document.querySelector('.side-bar .project-tree') as HTMLElement | null
       return !!(el && el.offsetParent !== null)
     }, null, { timeout: 5000 })
 
     const stillCollapsed = await page.evaluate(() => {
-      const a = document.querySelector('.side-bar .opened-files .icon-arrow')
+      const a = document.querySelector('.side-bar .project-tree > .title .icon-arrow')
       return !!(a && a.classList.contains('fold'))
     })
     expect(stillCollapsed).toBe(true)

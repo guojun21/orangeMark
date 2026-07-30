@@ -5,8 +5,6 @@
 // and the editor TOC builder. They cover the renderer surfaces touched by the
 // sideBar SFCs; deeper invariants live alongside the producers.
 
-import type { IFileState } from '@shared/types/files'
-
 // ---------------------------------------------------------------------------
 // File tree (sideBar/tree.vue, treeFile.vue, treeFolder.vue, project store)
 // ---------------------------------------------------------------------------
@@ -53,10 +51,3 @@ export interface SearchResult {
   filePath: string
   matches: SearchMatch[]
 }
-
-// ---------------------------------------------------------------------------
-// Tab descriptor (sideBar/treeOpenedTab.vue)
-// ---------------------------------------------------------------------------
-
-// The sideBar consumes the same per-tab state shape as the editor store.
-export type TabDescriptor = IFileState

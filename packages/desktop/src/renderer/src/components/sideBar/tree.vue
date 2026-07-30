@@ -40,65 +40,6 @@
       </div>
     </div>
 
-    <!-- Opened tabs -->
-    <div
-      v-if="openedFilesInSidebar"
-      class="opened-files"
-    >
-      <div class="title">
-        <el-icon
-          class="icon-arrow"
-          :class="{ fold: !showOpenedFiles }"
-          :size="12"
-          @click.stop="toggleOpenedFiles()"
-        >
-          <ArrowRight />
-        </el-icon>
-        <span
-          class="default-cursor text-overflow"
-          @click.stop="toggleOpenedFiles()"
-        >{{
-          t('sideBar.tree.openedFiles')
-        }}</span>
-        <a
-          href="javascript:;"
-          :title="t('sideBar.tree.saveAll')"
-          @click.stop="saveAll(false)"
-        >
-          <svg
-            class="icon"
-            aria-hidden="true"
-          >
-            <use xlink:href="#icon-save-all" />
-          </svg>
-        </a>
-        <a
-          href="javascript:;"
-          :title="t('sideBar.tree.closeAll')"
-          @click.stop="saveAll(true)"
-        >
-          <svg
-            class="icon"
-            aria-hidden="true"
-          >
-            <use xlink:href="#icon-close-all" />
-          </svg>
-        </a>
-      </div>
-      <div
-        v-show="showOpenedFiles"
-        class="opened-files-list"
-      >
-        <transition-group name="list">
-          <opened-file
-            v-for="tab of tabs"
-            :key="tab.id"
-            :file="tab"
-          />
-        </transition-group>
-      </div>
-    </div>
-
     <!-- Project tree view -->
     <div
       v-if="projectTree"
@@ -249,11 +190,9 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useProjectStore } from '@/store/project'
-import { useEditorStore } from '@/store/editor'
 import { usePreferencesStore } from '@/store/preferences'
 import Folder from './treeFolder.vue'
 import File from './treeFile.vue'
-import OpenedFile from './treeOpenedTab.vue'
 import bus from '../../bus'
 import { showContextMenu } from '../../contextMenu/sideBar'
 import { useI18n } from 'vue-i18n'
@@ -268,7 +207,7 @@ import {
   Fold
 } from '@element-plus/icons-vue'
 import { buildWorkspaceFolderList } from '@shared/utils/workspaceFolders'
-import type { TreeNode, TabDescriptor } from './types'
+import type { TreeNode } from './types'
 
 const { t } = useI18n()
 
@@ -278,8 +217,6 @@ const props = defineProps<{
   // `v-if="projectTree"`. Type the prop nullable to match runtime + the
   // template guard.
   projectTree: TreeNode | null
-  openedFiles?: TabDescriptor[]
-  tabs?: TabDescriptor[]
 }>()
 
 const depth = 0
@@ -288,22 +225,18 @@ const depth = 0
 // refs reset to expanded on re-open. Back them with localStorage (like the
 // sidebar width) so the state survives a re-mount and app restart.
 const SHOW_DIRECTORIES_KEY = 'side-bar-show-directories'
-const SHOW_OPENED_FILES_KEY = 'side-bar-show-opened-files'
 const readSectionExpanded = (key: string): boolean => localStorage.getItem(key) !== 'false'
 const showDirectories = ref(readSectionExpanded(SHOW_DIRECTORIES_KEY))
-const showOpenedFiles = ref(readSectionExpanded(SHOW_OPENED_FILES_KEY))
 const createName = ref('')
 const input = ref<HTMLInputElement | null>(null)
 
 const projectStore = useProjectStore()
-const editorStore = useEditorStore()
 const preferencesStore = usePreferencesStore()
 
 // Computed properties
 const { createCache } = storeToRefs(projectStore)
 const { clipboard } = storeToRefs(projectStore)
-const { openedFilesInSidebar, recentlyOpenedFolders, workspaceFolders, language } =
-  storeToRefs(preferencesStore)
+const { recentlyOpenedFolders, workspaceFolders, language } = storeToRefs(preferencesStore)
 
 const isChinese = computed(() => language.value.startsWith('zh'))
 const explorerTitle = computed(() => (isChinese.value ? '资源管理器' : 'EXPLORER'))
@@ -361,10 +294,6 @@ const projectName = (pathname: string): string => {
   return window.path.basename(pathname) || pathname
 }
 
-const saveAll = (isClose: boolean): void => {
-  editorStore.ASK_FOR_SAVE_ALL(isClose)
-}
-
 const startCreate = (type: 'file' | 'directory'): void => {
   projectStore.CHANGE_ACTIVE_ITEM(props.projectTree)
   bus.emit('SIDEBAR::new', type)
@@ -387,11 +316,6 @@ const collapseAll = (): void => {
 const handleRootContextMenu = (event: MouseEvent): void => {
   projectStore.CHANGE_ACTIVE_ITEM(props.projectTree)
   showContextMenu(event, !!clipboard.value)
-}
-
-const toggleOpenedFiles = (): void => {
-  showOpenedFiles.value = !showOpenedFiles.value
-  localStorage.setItem(SHOW_OPENED_FILES_KEY, String(showOpenedFiles.value))
 }
 
 const toggleDirectories = (): void => {
@@ -574,53 +498,14 @@ onMounted(() => {
   transform: rotate(0);
 }
 
-.opened-files > .title,
 .project-tree > .title {
   height: 30px;
   line-height: 30px;
   font-size: 14px;
 }
 
-.opened-files .title {
-  padding-right: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.opened-files .title > span {
-  flex: 1;
-}
-
-.opened-files .title > a {
-  display: none;
-  text-decoration: none;
-  color: var(--sideBarColor);
-  margin-left: 8px;
-}
-.opened-files div.title:hover > a,
-.opened-files div.title > a:hover {
-  display: block;
-}
-
-.opened-files div.title:hover > a:hover,
-.opened-files div.title > a:hover:hover {
-  color: var(--highlightThemeColor);
-}
-.opened-files {
-  display: flex;
-  flex-direction: column;
-}
 .default-cursor {
   cursor: pointer;
-}
-.opened-files .opened-files-list {
-  max-height: 112px;
-  overflow: auto;
-  flex: 1;
-}
-
-.opened-files .opened-files-list::-webkit-scrollbar:vertical {
-  width: 8px;
 }
 
 .project-tree {

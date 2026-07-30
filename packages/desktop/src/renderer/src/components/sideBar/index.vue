@@ -46,8 +46,6 @@
       <tree
         v-if="rightColumn === 'files'"
         :project-tree="projectTree"
-        :opened-files="openedFiles"
-        :tabs="tabs"
       />
       <side-bar-search v-else-if="rightColumn === 'search'" />
       <toc v-else-if="rightColumn === 'toc'" />
@@ -64,7 +62,6 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useLayoutStore } from '@/store/layout'
 import { useProjectStore } from '@/store/project'
-import { useEditorStore } from '@/store/editor'
 import { usePreferencesStore } from '@/store/preferences'
 import { isOsx as isOsxPlatform } from '@/util'
 
@@ -74,24 +71,20 @@ import SideBarSearch from './search.vue'
 import Toc from './toc.vue'
 import { storeToRefs } from 'pinia'
 import { Expand, Fold } from '@element-plus/icons-vue'
-import type { TabDescriptor } from './types'
 
 const layoutStore = useLayoutStore()
 const projectStore = useProjectStore()
-const editorStore = useEditorStore()
 const preferencesStore = usePreferencesStore()
 const isOsx = isOsxPlatform
 
 const sideBar = ref<HTMLDivElement | null>(null)
 const dragBar = ref<HTMLDivElement | null>(null)
 
-const openedFiles = ref<TabDescriptor[]>([])
 const sideBarViewWidth = ref(280)
 
 const { rightColumn, showSideBar, sideBarWidth } = storeToRefs(layoutStore)
 
 const { projectTree } = storeToRefs(projectStore)
-const { tabs } = storeToRefs(editorStore)
 const { language } = storeToRefs(preferencesStore)
 const lastExpandedColumn = ref(rightColumn.value || 'files')
 
