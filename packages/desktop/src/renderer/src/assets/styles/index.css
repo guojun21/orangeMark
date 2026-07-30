@@ -5,20 +5,20 @@
 
   /*editor*/
   /*Theme color cluster*/
-  --themeColor: rgba(33, 181, 111, 1);
-  --themeColor90: rgba(33, 181, 111, 0.9);
-  --themeColor80: rgba(33, 181, 111, 0.8);
-  --themeColor70: rgba(33, 181, 111, 0.7);
-  --themeColor60: rgba(33, 181, 111, 0.6);
-  --themeColor50: rgba(33, 181, 111, 0.5);
-  --themeColor40: rgba(33, 181, 111, 0.4);
-  --themeColor30: rgba(33, 181, 111, 0.3);
-  --themeColor20: rgba(33, 181, 111, 0.2);
-  --themeColor10: rgba(33, 181, 111, 0.1);
+  --themeColor: rgba(194, 65, 12, 1);
+  --themeColor90: rgba(194, 65, 12, 0.9);
+  --themeColor80: rgba(194, 65, 12, 0.8);
+  --themeColor70: rgba(194, 65, 12, 0.7);
+  --themeColor60: rgba(194, 65, 12, 0.6);
+  --themeColor50: rgba(194, 65, 12, 0.5);
+  --themeColor40: rgba(194, 65, 12, 0.4);
+  --themeColor30: rgba(194, 65, 12, 0.3);
+  --themeColor20: rgba(194, 65, 12, 0.2);
+  --themeColor10: rgba(194, 65, 12, 0.1);
   --highlightThemeColor: var(--themeColor);
 
-  --highlightColor: rgba(33, 181, 111, 0.4);
-  --selectionColor: rgba(0, 0, 0, 0.1);
+  --highlightColor: rgba(234, 88, 12, 0.34);
+  --selectionColor: rgba(194, 65, 12, 0.14);
   --editorColor: #4d4d4d;
   --editorColor80: #333333;
   --editorColor60: #666666;
@@ -53,13 +53,13 @@
   --buttonPrimaryBorder: none;
   --buttonPrimaryShadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   --buttonPrimaryFontColorHover: var(--buttonPrimaryFontColor);
-  --buttonPrimaryBgColorHover: var(--buttonPrimaryBgColor);
+  --buttonPrimaryBgColorHover: #a83a0b;
   --buttonPrimaryBorderHover: var(--buttonPrimaryBorder);
   --buttonPrimaryFontColorActive: var(--buttonPrimaryFontColor);
-  --buttonPrimaryBgColorActive: var(--buttonPrimaryBgColor);
+  --buttonPrimaryBgColorActive: #8f3210;
   --buttonPrimaryBorderActive: var(--buttonPrimaryBorder);
   --buttonPrimaryFocusBorder: none;
-  --buttonPrimaryFocusShadow: inset 0 0 0 1px rgba(13, 91, 55, 0.5), 0 0 0 1px var(--themeColor);
+  --buttonPrimaryFocusShadow: inset 0 0 0 1px rgba(124, 45, 18, 0.55), 0 0 0 1px var(--themeColor);
   --tableBorderColor: #e5e5e5;
 
   /* Markdown element colors */
