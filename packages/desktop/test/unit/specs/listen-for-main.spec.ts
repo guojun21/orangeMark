@@ -47,7 +47,7 @@ describe('listenForMain store EDITOR_EDIT_ACTION', () => {
   it("opens the search side panel for 'findInFolder'", () => {
     const layoutStore = useLayoutStore()
     expect(layoutStore.rightColumn).toBe('files')
-    expect(layoutStore.showSideBar).toBe(false)
+    expect(layoutStore.showSideBar).toBe(true)
 
     useListenForMainStore().EDITOR_EDIT_ACTION('findInFolder')
 
@@ -57,11 +57,20 @@ describe('listenForMain store EDITOR_EDIT_ACTION', () => {
 
   it('does not mutate the layout for a non-findInFolder action', () => {
     const layoutStore = useLayoutStore()
-    layoutStore.$patch({ rightColumn: 'files', showSideBar: false })
+    layoutStore.$patch({ rightColumn: 'files', showSideBar: true })
 
     useListenForMainStore().EDITOR_EDIT_ACTION('insertParagraph')
 
     expect(layoutStore.rightColumn).toBe('files')
-    expect(layoutStore.showSideBar).toBe(false)
+    expect(layoutStore.showSideBar).toBe(true)
+  })
+
+  it('keeps the project explorer visible when old layout state requests hiding it', () => {
+    const layoutStore = useLayoutStore()
+
+    layoutStore.SET_LAYOUT({ showSideBar: false })
+    layoutStore.TOGGLE_LAYOUT_ENTRY('showSideBar')
+
+    expect(layoutStore.showSideBar).toBe(true)
   })
 })

@@ -112,14 +112,14 @@ class EditorWindow extends BaseWindow {
     const {
       titleBarStyle,
       theme,
-      sideBarVisibility,
-      restoreLayoutState,
       tabBarVisibility,
       sourceCodeModeEnabled,
       spellcheckerEnabled,
       spellcheckerLanguage
     } = preferences.getAll()
-    const resolvedSideBarVisibility = restoreLayoutState ? !!sideBarVisibility : false
+    // orangeMark always exposes the project explorer. Older MarkText profiles
+    // may persist sideBarVisibility=false; never let that hide project context.
+    const resolvedSideBarVisibility = true
 
     // Enable native or custom/frameless window and titlebar
     if (!isOsx) {
@@ -509,9 +509,8 @@ class EditorWindow extends BaseWindow {
     browserWindow!.webContents.once('did-finish-load', () => {
       this.lifecycle = WindowLifecycle.READY
       const { preferences } = this._accessor
-      const { sideBarVisibility, restoreLayoutState, tabBarVisibility, sourceCodeModeEnabled } =
-        preferences.getAll()
-      const resolvedSideBarVisibility = restoreLayoutState ? !!sideBarVisibility : false
+      const { tabBarVisibility, sourceCodeModeEnabled } = preferences.getAll()
+      const resolvedSideBarVisibility = true
       const lineEnding = preferences.getPreferredEol()
       browserWindow!.webContents.send('mt::bootstrap-editor', {
         addBlankTab: false,

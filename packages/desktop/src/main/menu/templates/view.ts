@@ -53,7 +53,8 @@ export default function(keybindings: Keybindings): MenuItemConstructorOptions {
       id: 'sideBarMenuItem',
       accelerator: keybindings.getAccelerator('view.toggle-sidebar') ?? undefined,
       type: 'checkbox',
-      checked: false,
+      checked: true,
+      enabled: false,
       click(_item, focusedWindow) {
         actions.toggleSidebar(focusedWindow as BrowserWindow | undefined)
       }

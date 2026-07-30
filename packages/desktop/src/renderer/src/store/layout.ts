@@ -44,10 +44,13 @@ const createBufferedLayoutState = (state: unknown): BufferedLayout | null => {
 
 const initialWidth = localStorage.getItem('side-bar-width')
 const initialSideBarWidth = normalizeSideBarWidth(initialWidth)
+const PINNED_SIDE_BAR_VISIBILITY = true
 
 export const useLayoutStore = defineStore('layout', () => {
   const rightColumn = ref<string>('files')
-  const showSideBar = ref(false)
+  // orangeMark is project-first: the project explorer is permanent chrome,
+  // not an optional editor panel. Ignore stale MarkText preferences that hid it.
+  const showSideBar = ref(PINNED_SIDE_BAR_VISIBILITY)
   const showTabBar = ref(false)
   const sideBarWidth = ref<number>(initialSideBarWidth)
 
@@ -70,19 +73,19 @@ export const useLayoutStore = defineStore('layout', () => {
       window.electron.ipcRenderer.send(
         'mt::update-sidebar-menu',
         Number(windowId),
-        !!layout.showSideBar
+        PINNED_SIDE_BAR_VISIBILITY
       )
       const preferencesStore = usePreferencesStore()
       preferencesStore.SET_SINGLE_PREFERENCE({
         type: 'sideBarVisibility',
-        value: !!layout.showSideBar
+        value: PINNED_SIDE_BAR_VISIBILITY
       })
     }
     // Match the pre-migration `Object.assign(this, layout)` semantics: assign
     // each known field as-is (no normalization here; SET_SIDE_BAR_WIDTH owns
     // sideBarWidth's normalization), and skip unknown keys silently.
     if (layout.rightColumn !== undefined) rightColumn.value = layout.rightColumn
-    if (layout.showSideBar !== undefined) showSideBar.value = !!layout.showSideBar
+    if (layout.showSideBar !== undefined) showSideBar.value = PINNED_SIDE_BAR_VISIBILITY
     if (layout.showTabBar !== undefined) showTabBar.value = !!layout.showTabBar
     if (layout.sideBarWidth !== undefined) sideBarWidth.value = layout.sideBarWidth as number
     if (scheduleBufferUpdate) {
@@ -117,11 +120,11 @@ export const useLayoutStore = defineStore('layout', () => {
 
   function TOGGLE_LAYOUT_ENTRY(entryName: 'showSideBar' | 'showTabBar'): void {
     if (entryName === 'showSideBar') {
-      showSideBar.value = !showSideBar.value
+      showSideBar.value = PINNED_SIDE_BAR_VISIBILITY
       const preferencesStore = usePreferencesStore()
       preferencesStore.SET_SINGLE_PREFERENCE({
         type: 'sideBarVisibility',
-        value: !!showSideBar.value
+        value: PINNED_SIDE_BAR_VISIBILITY
       })
     } else if (entryName === 'showTabBar') {
       showTabBar.value = !showTabBar.value
