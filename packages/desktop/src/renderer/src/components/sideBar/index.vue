@@ -6,18 +6,6 @@
     :class="[{ collapsed: !rightColumn }, { 'is-osx': isOsx }]"
     :style="[!rightColumn ? { 'min-width': '45px' } : {}, { width: `${finalSideBarWidth}px` }]"
   >
-    <button
-      type="button"
-      class="sidebar-toggle"
-      :title="sidebarToggleLabel"
-      :aria-label="sidebarToggleLabel"
-      @click.stop="toggleSidebarPanel"
-    >
-      <el-icon :size="17">
-        <Expand v-if="!rightColumn" />
-        <Fold v-else />
-      </el-icon>
-    </button>
     <div class="left-column">
       <ul>
         <li
@@ -56,6 +44,22 @@
       class="drag-bar"
     />
   </div>
+  <Teleport to="body">
+    <button
+      v-show="showSideBar"
+      type="button"
+      class="sidebar-toggle"
+      :style="{ left: `${sidebarToggleLeft}px` }"
+      :title="sidebarToggleLabel"
+      :aria-label="sidebarToggleLabel"
+      @click.stop="toggleSidebarPanel"
+    >
+      <el-icon :size="17">
+        <Expand v-if="!rightColumn" />
+        <Fold v-else />
+      </el-icon>
+    </button>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -98,6 +102,11 @@ const finalSideBarWidth = computed<number>(() => {
   if (!showSideBar.value) return 0
   if (rightColumn.value === '') return 45
   return sideBarViewWidth.value < 220 ? 220 : sideBarViewWidth.value
+})
+
+const sidebarToggleLeft = computed<number>(() => {
+  if (rightColumn.value) return finalSideBarWidth.value - 39
+  return isOsx ? 106 : 7
 })
 
 onMounted(() => {
@@ -191,9 +200,8 @@ const handleLeftBottomClick = (name: string): void => {
 
 .sidebar-toggle {
   -webkit-app-region: no-drag;
-  position: absolute;
+  position: fixed;
   top: 7px;
-  right: 9px;
   z-index: 4;
   display: flex;
   align-items: center;
@@ -213,17 +221,6 @@ const handleLeftBottomClick = (name: string): void => {
   color: var(--highlightThemeColor);
   background: var(--sideBarItemHoverBgColor);
   outline: none;
-}
-
-.side-bar.collapsed .sidebar-toggle {
-  left: 7px;
-  right: auto;
-}
-
-.side-bar.collapsed.is-osx .sidebar-toggle {
-  position: fixed;
-  top: 7px;
-  left: 106px;
 }
 
 .side-bar .left-column svg {

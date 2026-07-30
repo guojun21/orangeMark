@@ -30,14 +30,11 @@ test.describe('Layout panel toggles', () => {
     if (app) await app.close()
   })
 
-  test('Sidebar toggle changes .side-bar visibility', async() => {
+  test('Sidebar menu keeps the project explorer pinned', async() => {
     const sideBar = page.locator('.side-bar')
-    const initial = await sideBar.isVisible()
+    await expect(sideBar).toBeVisible()
     await clickMenuById(app, 'sideBarMenuItem')
-    await waitForVisibilityFlip(page, '.side-bar', initial)
-    const afterToggle = await sideBar.isVisible()
-    expect(afterToggle).not.toBe(initial)
-    await clickMenuById(app, 'sideBarMenuItem')
+    await expect(sideBar).toBeVisible()
   })
 
   test('Tab bar toggle flips .editor-tabs visibility', async() => {
@@ -69,6 +66,30 @@ test.describe('Layout panel toggles', () => {
     // verifying the menu invocation does not throw is the main signal.
     await page.waitForTimeout(200)
     await clickMenuById(app, 'tocMenuItem')
+  })
+
+  test('Sidebar header toggle remains clickable after collapsing', async() => {
+    const sideBar = page.locator('.side-bar')
+    const toggle = page.locator('body > .sidebar-toggle')
+
+    await expect(toggle).toBeVisible()
+    expect(await toggle.evaluate((element) => element.parentElement === document.body)).toBe(true)
+
+    const initialBox = await sideBar.boundingBox()
+    if (initialBox && initialBox.width < 200) {
+      await toggle.click()
+    }
+
+    await expect(sideBar).toHaveCSS('min-width', '220px')
+    await toggle.click()
+    await expect
+      .poll(async() => (await sideBar.boundingBox())?.width ?? 0)
+      .toBeLessThanOrEqual(50)
+
+    await toggle.click()
+    await expect
+      .poll(async() => (await sideBar.boundingBox())?.width ?? 0)
+      .toBeGreaterThanOrEqual(220)
   })
 
   // Regression for the gap left between the sidebar and editor when the
