@@ -66,6 +66,7 @@ export interface IUserPreferences {
   darkModeTheme?: string
   lastOpenedFolder?: string
   recentlyOpenedFolders?: string[]
+  workspaceFolders?: string[]
   autoNormalizeLineEndings?: boolean
   watcherUsePolling?: boolean
   treePathExcludePatterns?: string[]

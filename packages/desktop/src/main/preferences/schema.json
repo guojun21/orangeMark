@@ -66,6 +66,15 @@
     "maxItems": 10,
     "default": []
   },
+  "workspaceFolders": {
+    "description": "General--Folders pinned in the multi-project switcher.--internal",
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "maxItems": 50,
+    "default": []
+  },
   "startUpAction": {
     "description": "General--The action after MarkText startup, open the last opened folder, open the specified folder or blank page",
     "enum": ["folder", "openLastFolder", "blank", "restoreAll"],

@@ -3,8 +3,21 @@
     v-show="showSideBar"
     ref="sideBar"
     class="side-bar"
+    :class="[{ collapsed: !rightColumn }, { 'is-osx': isOsx }]"
     :style="[!rightColumn ? { 'min-width': '45px' } : {}, { width: `${finalSideBarWidth}px` }]"
   >
+    <button
+      type="button"
+      class="sidebar-toggle"
+      :title="sidebarToggleLabel"
+      :aria-label="sidebarToggleLabel"
+      @click.stop="toggleSidebarPanel"
+    >
+      <el-icon :size="17">
+        <Expand v-if="!rightColumn" />
+        <Fold v-else />
+      </el-icon>
+    </button>
     <div class="left-column">
       <ul>
         <li
@@ -52,17 +65,22 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import { useLayoutStore } from '@/store/layout'
 import { useProjectStore } from '@/store/project'
 import { useEditorStore } from '@/store/editor'
+import { usePreferencesStore } from '@/store/preferences'
+import { isOsx as isOsxPlatform } from '@/util'
 
 import { sideBarIcons, sideBarBottomIcons } from './help'
 import Tree from './tree.vue'
 import SideBarSearch from './search.vue'
 import Toc from './toc.vue'
 import { storeToRefs } from 'pinia'
+import { Expand, Fold } from '@element-plus/icons-vue'
 import type { TabDescriptor } from './types'
 
 const layoutStore = useLayoutStore()
 const projectStore = useProjectStore()
 const editorStore = useEditorStore()
+const preferencesStore = usePreferencesStore()
+const isOsx = isOsxPlatform
 
 const sideBar = ref<HTMLDivElement | null>(null)
 const dragBar = ref<HTMLDivElement | null>(null)
@@ -74,6 +92,14 @@ const { rightColumn, showSideBar, sideBarWidth } = storeToRefs(layoutStore)
 
 const { projectTree } = storeToRefs(projectStore)
 const { tabs } = storeToRefs(editorStore)
+const { language } = storeToRefs(preferencesStore)
+const lastExpandedColumn = ref(rightColumn.value || 'files')
+
+const sidebarToggleLabel = computed(() => {
+  const isChinese = language.value.startsWith('zh')
+  if (rightColumn.value) return isChinese ? '收起侧栏' : 'Collapse sidebar'
+  return isChinese ? '展开侧栏' : 'Expand sidebar'
+})
 
 const finalSideBarWidth = computed<number>(() => {
   if (!showSideBar.value) return 0
@@ -120,6 +146,7 @@ const handleLeftIconClick = (name: string): void => {
     // finalSideBarWidth evaluates to the 45px icon strip and would overwrite
     // the user's real width with the clamped 220px minimum (#2421).
     const widthToPersist = finalSideBarWidth.value
+    lastExpandedColumn.value = name
     layoutStore.SET_LAYOUT({ rightColumn: '' })
     layoutStore.CHANGE_SIDE_BAR_WIDTH(widthToPersist)
   } else {
@@ -130,6 +157,20 @@ const handleLeftIconClick = (name: string): void => {
       layoutStore.CHANGE_SIDE_BAR_WIDTH(finalSideBarWidth.value)
     }
   }
+}
+
+const toggleSidebarPanel = (): void => {
+  if (rightColumn.value) {
+    const widthToPersist = finalSideBarWidth.value
+    lastExpandedColumn.value = rightColumn.value
+    layoutStore.SET_LAYOUT({ rightColumn: '' })
+    layoutStore.CHANGE_SIDE_BAR_WIDTH(widthToPersist)
+    return
+  }
+
+  layoutStore.SET_LAYOUT({ rightColumn: lastExpandedColumn.value || 'files' })
+  sideBarViewWidth.value = +sideBarWidth.value
+  layoutStore.CHANGE_SIDE_BAR_WIDTH(finalSideBarWidth.value)
 }
 
 const handleLeftBottomClick = (name: string): void => {
@@ -152,6 +193,44 @@ const handleLeftBottomClick = (name: string): void => {
   user-select: none;
   background: var(--sideBarBgColor);
   border-right: 1px solid var(--itemBgColor);
+  overflow: visible;
+}
+
+.sidebar-toggle {
+  -webkit-app-region: no-drag;
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  color: var(--sideBarIconColor);
+  background: transparent;
+  cursor: pointer;
+}
+
+.sidebar-toggle:hover,
+.sidebar-toggle:focus-visible {
+  color: var(--highlightThemeColor);
+  background: var(--sideBarItemHoverBgColor);
+  outline: none;
+}
+
+.side-bar.collapsed .sidebar-toggle {
+  left: 7px;
+  right: auto;
+}
+
+.side-bar.collapsed.is-osx .sidebar-toggle {
+  position: fixed;
+  top: 7px;
+  left: 106px;
 }
 
 .side-bar .left-column svg {
@@ -164,8 +243,12 @@ const handleLeftBottomClick = (name: string): void => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-top: 28px;
+  padding-top: 40px;
   box-sizing: border-box;
+}
+
+.side-bar.is-osx .left-column {
+  padding-top: 48px;
 }
 
 .left-column > ul {
@@ -211,6 +294,12 @@ const handleLeftBottomClick = (name: string): void => {
   flex: 1;
   width: calc(100% - 50px);
   overflow: hidden;
+  padding-top: 40px;
+  box-sizing: border-box;
+}
+
+.side-bar.is-osx .right-column {
+  padding-top: 48px;
 }
 
 .drag-bar {

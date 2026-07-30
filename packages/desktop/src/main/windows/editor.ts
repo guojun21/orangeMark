@@ -12,6 +12,7 @@ import { showEditorContextMenu } from '../contextMenu/editor'
 import { loadMarkdownFile, normalizeMarkdownPath } from '../filesystem/markdown'
 import { switchLanguage } from '../spellchecker'
 import fs from 'fs'
+import { buildWorkspaceFolderList } from '@shared/utils/workspaceFolders'
 
 type RawMarkdownDocument = Awaited<ReturnType<typeof loadMarkdownFile>>
 
@@ -400,11 +401,22 @@ class EditorWindow extends BaseWindow {
       const previousFolders = preferences.getItem<string[]>('recentlyOpenedFolders') ?? []
       const recentlyOpenedFolders = [
         pathname,
-        ...previousFolders.filter((folder) =>
-          typeof folder === 'string' && !isSamePathSync(folder, pathname)
+        ...previousFolders.filter(
+          (folder) => typeof folder === 'string' && !isSamePathSync(folder, pathname)
         )
       ].slice(0, 10)
-      preferences.setItems({ lastOpenedFolder: pathname, recentlyOpenedFolders })
+      const previousWorkspaceFolders = preferences.getItem<string[]>('workspaceFolders') ?? []
+      const workspaceFolders = buildWorkspaceFolderList({
+        activePath: pathname,
+        storedPaths: previousWorkspaceFolders,
+        legacyPaths: previousFolders,
+        isSamePath: isSamePathSync
+      })
+      preferences.setItems({
+        lastOpenedFolder: pathname,
+        recentlyOpenedFolders,
+        workspaceFolders
+      })
       appMenu.addRecentlyUsedDocument(pathname)
       this._openedRootDirectory = pathname
       ipcMain.emit('watcher-watch-directory', browserWindow, pathname)
@@ -603,9 +615,7 @@ class EditorWindow extends BaseWindow {
       const restoredRoot = bufferState.project?.rootDirectory
       const restoredRootInfo = restoredRoot ? normalizeMarkdownPath(restoredRoot) : null
       const lastOpenedFolder = preferences.getItem<string>('lastOpenedFolder')
-      const fallbackRootInfo = lastOpenedFolder
-        ? normalizeMarkdownPath(lastOpenedFolder)
-        : null
+      const fallbackRootInfo = lastOpenedFolder ? normalizeMarkdownPath(lastOpenedFolder) : null
       const rootDirectory = restoredRootInfo?.isDir
         ? restoredRootInfo.path
         : fallbackRootInfo?.isDir

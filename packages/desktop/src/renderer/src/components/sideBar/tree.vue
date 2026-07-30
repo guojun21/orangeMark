@@ -4,8 +4,47 @@
       <span>{{ explorerTitle }}</span>
     </div>
 
+    <!-- Persistent multi-project switcher -->
+    <div class="workspace-projects">
+      <div class="workspace-projects-header">
+        <span>{{ projectsTitle }}</span>
+        <button
+          type="button"
+          :title="addProjectTitle"
+          :aria-label="addProjectTitle"
+          @click.stop="openFolder"
+        >
+          <el-icon :size="15">
+            <Plus />
+          </el-icon>
+        </button>
+      </div>
+      <div
+        v-if="workspaceProjects.length"
+        class="workspace-projects-list"
+      >
+        <button
+          v-for="pathname of workspaceProjects"
+          :key="pathname"
+          type="button"
+          :class="{ active: isActiveProject(pathname) }"
+          :title="pathname"
+          @click="openWorkspaceProject(pathname)"
+        >
+          <el-icon :size="15">
+            <FolderOpened v-if="isActiveProject(pathname)" />
+            <FolderIcon v-else />
+          </el-icon>
+          <span class="text-overflow">{{ projectName(pathname) }}</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Opened tabs -->
-    <div v-if="openedFilesInSidebar" class="opened-files">
+    <div
+      v-if="openedFilesInSidebar"
+      class="opened-files"
+    >
       <div class="title">
         <el-icon
           class="icon-arrow"
@@ -89,28 +128,36 @@
             :title="actionTitles.newFile"
             @click.stop="startCreate('file')"
           >
-            <el-icon :size="15"><DocumentAdd /></el-icon>
+            <el-icon :size="15">
+              <DocumentAdd />
+            </el-icon>
           </button>
           <button
             type="button"
             :title="actionTitles.newFolder"
             @click.stop="startCreate('directory')"
           >
-            <el-icon :size="15"><FolderAdd /></el-icon>
+            <el-icon :size="15">
+              <FolderAdd />
+            </el-icon>
           </button>
           <button
             type="button"
             :title="actionTitles.refresh"
             @click.stop="refreshProject"
           >
-            <el-icon :size="15"><Refresh /></el-icon>
+            <el-icon :size="15">
+              <Refresh />
+            </el-icon>
           </button>
           <button
             type="button"
             :title="actionTitles.collapseAll"
             @click.stop="collapseAll"
           >
-            <el-icon :size="15"><Fold /></el-icon>
+            <el-icon :size="15">
+              <Fold />
+            </el-icon>
           </button>
         </div>
       </div>
@@ -178,7 +225,9 @@
         v-if="recentlyOpenedFolders.length"
         class="recent-projects"
       >
-        <div class="recent-projects-title">{{ recentProjectsTitle }}</div>
+        <div class="recent-projects-title">
+          {{ recentProjectsTitle }}
+        </div>
         <button
           v-for="pathname of recentlyOpenedFolders"
           :key="pathname"
@@ -186,7 +235,9 @@
           :title="pathname"
           @click="openRecentProject(pathname)"
         >
-          <el-icon :size="15"><FolderOpened /></el-icon>
+          <el-icon :size="15">
+            <FolderOpened />
+          </el-icon>
           <span class="text-overflow">{{ projectName(pathname) }}</span>
         </button>
       </div>
@@ -211,9 +262,12 @@ import {
   DocumentAdd,
   FolderAdd,
   FolderOpened,
+  Folder as FolderIcon,
+  Plus,
   Refresh,
   Fold
 } from '@element-plus/icons-vue'
+import { buildWorkspaceFolderList } from '@shared/utils/workspaceFolders'
 import type { TreeNode, TabDescriptor } from './types'
 
 const { t } = useI18n()
@@ -248,14 +302,32 @@ const preferencesStore = usePreferencesStore()
 // Computed properties
 const { createCache } = storeToRefs(projectStore)
 const { clipboard } = storeToRefs(projectStore)
-const { openedFilesInSidebar, recentlyOpenedFolders, language } = storeToRefs(preferencesStore)
+const { openedFilesInSidebar, recentlyOpenedFolders, workspaceFolders, language } =
+  storeToRefs(preferencesStore)
 
 const isChinese = computed(() => language.value.startsWith('zh'))
-const explorerTitle = computed(() => isChinese.value ? '资源管理器' : 'EXPLORER')
-const recentProjectsTitle = computed(() => isChinese.value ? '最近项目' : 'RECENT PROJECTS')
-const actionTitles = computed(() => isChinese.value
-  ? { newFile: '新建文件', newFolder: '新建文件夹', refresh: '刷新', collapseAll: '全部折叠' }
-  : { newFile: 'New File', newFolder: 'New Folder', refresh: 'Refresh', collapseAll: 'Collapse All' })
+const explorerTitle = computed(() => (isChinese.value ? '资源管理器' : 'EXPLORER'))
+const recentProjectsTitle = computed(() => (isChinese.value ? '最近项目' : 'RECENT PROJECTS'))
+const projectsTitle = computed(() => (isChinese.value ? '项目' : 'PROJECTS'))
+const addProjectTitle = computed(() => (isChinese.value ? '添加项目' : 'Add project'))
+const workspaceProjects = computed(() =>
+  buildWorkspaceFolderList({
+    activePath: props.projectTree?.pathname ?? '',
+    storedPaths: workspaceFolders.value,
+    legacyPaths: recentlyOpenedFolders.value,
+    isSamePath: window.fileUtils.isSamePathSync
+  })
+)
+const actionTitles = computed(() =>
+  isChinese.value
+    ? { newFile: '新建文件', newFolder: '新建文件夹', refresh: '刷新', collapseAll: '全部折叠' }
+    : {
+        newFile: 'New File',
+        newFolder: 'New Folder',
+        refresh: 'Refresh',
+        collapseAll: 'Collapse All'
+      }
+)
 
 // The createCache state is `{ dirname, type }` while an input is shown, and
 // `{}` otherwise. Expose a typed accessor for the template so we don't have
@@ -272,6 +344,17 @@ const openFolder = (): void => {
 
 const openRecentProject = (pathname: string): void => {
   projectStore.ASK_FOR_OPEN_PROJECT_PATH(pathname)
+}
+
+const openWorkspaceProject = (pathname: string): void => {
+  if (!isActiveProject(pathname)) {
+    projectStore.ASK_FOR_OPEN_PROJECT_PATH(pathname)
+  }
+}
+
+const isActiveProject = (pathname: string): boolean => {
+  const activePath = props.projectTree?.pathname
+  return !!activePath && window.fileUtils.isSamePathSync(activePath, pathname)
 }
 
 const projectName = (pathname: string): string => {
@@ -399,6 +482,84 @@ onMounted(() => {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
+}
+
+.workspace-projects {
+  flex-shrink: 0;
+  padding: 0 8px 8px;
+  border-bottom: 1px solid var(--itemBgColor);
+}
+
+.workspace-projects-header {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 3px 0 7px;
+  color: var(--sideBarTitleColor);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.workspace-projects-header > span {
+  flex: 1;
+}
+
+.workspace-projects-header > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  color: var(--sideBarIconColor);
+  background: transparent;
+  cursor: pointer;
+}
+
+.workspace-projects-header > button:hover,
+.workspace-projects-header > button:focus-visible {
+  color: var(--highlightThemeColor);
+  background: var(--sideBarItemHoverBgColor);
+  outline: none;
+}
+
+.workspace-projects-list {
+  max-height: 128px;
+  overflow: auto;
+}
+
+.workspace-projects-list > button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  height: 30px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 5px;
+  color: var(--sideBarColor);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.workspace-projects-list > button:hover,
+.workspace-projects-list > button:focus-visible {
+  background: var(--sideBarItemHoverBgColor);
+  outline: none;
+}
+
+.workspace-projects-list > button.active {
+  color: var(--highlightThemeColor);
+  background: var(--sideBarItemHoverBgColor);
+  font-weight: 600;
+}
+
+.workspace-projects-list::-webkit-scrollbar:vertical {
+  width: 8px;
 }
 
 .icon-arrow {

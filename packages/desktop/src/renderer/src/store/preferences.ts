@@ -36,6 +36,7 @@ export interface PreferencesState {
   defaultDirectoryToOpen: string
   lastOpenedFolder: string
   recentlyOpenedFolders: string[]
+  workspaceFolders: string[]
   treePathExcludePatterns: string[]
   language: string
 
@@ -155,6 +156,7 @@ export const usePreferencesStore = defineStore('preferences', {
     defaultDirectoryToOpen: '',
     lastOpenedFolder: '',
     recentlyOpenedFolders: [],
+    workspaceFolders: [],
     treePathExcludePatterns: [],
     language: 'en',
 
